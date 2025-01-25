@@ -1,5 +1,7 @@
-// implementar
+import PetshopService from "@services/petshop.service";
+import {  Request, Response } from "express";
 
 export function cadastrarPetshop(req: Request, res: Response) {
-  throw new Error("Not implemented");
+  if (!req.petshop) return;
+  res.status(200).send(PetshopService.create(req.petshop));
 }

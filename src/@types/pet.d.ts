@@ -8,4 +8,4 @@ export type Pet = {
   created_at: string;
 };
 
-export type PetInput = Omit<Pet, "id" | "created_at">;
+export type PetInput = Omit<Pet, "id" | "created_at" | "vaccinated">;
