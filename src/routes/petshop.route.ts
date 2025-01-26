@@ -1,9 +1,9 @@
 import { cadastrarPetshop } from "@controllers/petshop.controller";
 import { Router } from "express";
-import { validatePetshop } from "src/middlewares/validator";
+import { validatePetshopData } from "src/middlewares/validator";
 
 const petshopRouter = Router();
 
-petshopRouter.post("/", validatePetshop, cadastrarPetshop);
+petshopRouter.post("/", validatePetshopData, cadastrarPetshop);
 
 export default petshopRouter;

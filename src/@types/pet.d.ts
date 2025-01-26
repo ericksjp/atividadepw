@@ -2,10 +2,10 @@ export type Pet = {
   id: string;
   name: string;
   type: string;
-  description: string;
+  description?: string;
   vaccinated: boolean;
-  deadline_vaccination: string;
-  created_at: string;
+  deadline_vaccination: Date;
+  created_at: Date;
 };
 
 export type PetInput = Omit<Pet, "id" | "created_at" | "vaccinated">;

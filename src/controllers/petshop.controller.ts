@@ -3,5 +3,5 @@ import {  Request, Response } from "express";
 
 export function cadastrarPetshop(req: Request, res: Response) {
   if (!req.petshop) return;
-  res.status(200).send(PetshopService.create(req.petshop));
+  res.status(200).send(PetshopService.addPetshop(req.petshop));
 }
