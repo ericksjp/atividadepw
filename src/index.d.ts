@@ -1,7 +1,7 @@
 // types/express.d.ts
 import { Request } from "express";
-import { PetInput } from "./pet";
-import { PetshopInput } from "./petshop";
+import { PetInput } from "./types/pet";
+import { PetshopInput } from "./types/petshop";
 
 declare global {
   namespace Express {

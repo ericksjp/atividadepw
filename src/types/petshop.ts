@@ -1,4 +1,4 @@
-import { Pet } from "./pet";
+import { Pet } from "../types/pet";
 import {Petshop as PrismaPetshop} from "@prisma/client"
 
 // Extend PetshopInput with additional properties

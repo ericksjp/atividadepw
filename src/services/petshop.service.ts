@@ -1,5 +1,5 @@
-import { Pet, PetInput } from "src/@types/pet";
-import { Petshop, PetshopInput } from "src/@types/petshop";
+import { Pet, PetInput } from "../types/pet";
+import { Petshop, PetshopInput } from "../types/petshop";
 import prisma from "src/db/prisma";
 
 class PetshopService {

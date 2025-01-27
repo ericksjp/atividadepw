@@ -1,6 +1,6 @@
 import PetshopService from "@services/petshop.service";
 import { Request, Response } from "express";
-import { PetInput } from "src/@types/pet";
+import { PetInput } from "../types/pet";
 
 export async function listarPets(req: Request, res: Response) {
   const pets = await PetshopService.getPets(req.cnpj as string);
