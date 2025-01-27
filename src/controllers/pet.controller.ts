@@ -2,27 +2,33 @@ import PetshopService from "@services/petshop.service";
 import { Request, Response } from "express";
 import { PetInput } from "src/@types/pet";
 
-export function listarPets(req: Request, res: Response) {
-  const pets = PetshopService.getPets(req.cnpj as string);
+export async function listarPets(req: Request, res: Response) {
+  const pets = await PetshopService.getPets(req.cnpj as string);
   res.status(200).send(pets);
 }
 
-export function cadastrarPet(req: Request, res: Response) {
-  const pet = PetshopService.insertPet(req.cnpj as string, req.pet as PetInput);
-  res.status(201).send(pet);
+export async function cadastrarPet(req: Request, res: Response) {
+  const createdPet = await PetshopService.insertPet(
+    req.cnpj as string,
+    req.pet as PetInput,
+  );
+  res.status(201).send(createdPet);
 }
 
-export function atualizarPet(req: Request, res: Response) {
-  const pet = PetshopService.updatePet(req.cnpj as string, req.petIndex as number, req.pet as PetInput);
-  res.status(200).send(pet);
+export async function atualizarPet(req: Request, res: Response) {
+  const updatedPet = await PetshopService.updatePet(
+    req.petId as string,
+    req.pet as PetInput,
+  );
+  res.status(200).send(updatedPet);
 }
 
-export function vacinarPet(req: Request, res: Response) {
-  const pet = PetshopService.vaccinatePet(req.cnpj as string, req.petIndex as number);
-  res.status(200).send(pet);
+export async function vacinarPet(req: Request, res: Response) {
+  const vaccinatedPet = await PetshopService.vaccinatePet(req.petId as string);
+  res.status(200).send(vaccinatedPet);
 }
 
-export function removerPet(req: Request, res: Response) {
-  const pets = PetshopService.deletePet(req.cnpj as string, req.petIndex as number);
-  res.status(200).send(pets);
+export async function removerPet(req: Request, res: Response) {
+  const deletedPet = await PetshopService.deletePet(req.petId as string);
+  res.status(200).send(deletedPet);
 }

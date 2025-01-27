@@ -12,7 +12,7 @@ import PetshopService from "@services/petshop.service";
  * error message. If all validations pass, it sets the petshop data in the request object and calls
  * the next middleware.
  */
-export function validatePetshopData(req: Request, res: Response, next: NextFunction) {
+export async function validatePetshopData(req: Request, res: Response, next: NextFunction) {
   const { name, cnpj } = req.body || {};
 
   if (!name) {
@@ -37,11 +37,6 @@ export function validatePetshopData(req: Request, res: Response, next: NextFunct
     return;
   }
 
-  if (PetshopService.hasPetshop(cnpj)) {
-    res.status(400).json({ error: "Petshop já cadastrado!" });
-    return;
-  }
-
   req.petshop = { name: trimmedName, cnpj };
 
   next();
@@ -54,7 +49,7 @@ export function validatePetshopData(req: Request, res: Response, next: NextFunct
  * in the PetshopService. If any validation fails, it responds with an appropriate error message.
  * If all validations pass, it sets the CNPJ in the request object and calls the next middleware.
  */
-export function checkExistUsserAccount(req: Request, res: Response, next: NextFunction) {
+export async function checkExistUsserAccount(req: Request, res: Response, next: NextFunction) {
   const cnpjHeader = req.headers['cnpj'] as string;
 
   if (!cnpjHeader) {
@@ -62,7 +57,7 @@ export function checkExistUsserAccount(req: Request, res: Response, next: NextFu
     return;
   }
 
-  if (!PetshopService.hasPetshop(cnpjHeader)) {
+  if (!await PetshopService.hasPetshop(cnpjHeader)) {
     res.status(404).json({ error: "Petshop não cadastrado!" });
     return;
   }
@@ -79,13 +74,13 @@ export function checkExistUsserAccount(req: Request, res: Response, next: NextFu
  * with a 404 status and an error message. If the pet is found, it sets the pet index
  * in the request object and calls the next middleware.
  */
-export function validatePetExistence(req: Request, res: Response, next: NextFunction) {
-  const petIndex = PetshopService.getPetIndex(req.cnpj || "", req.params.id);
-  if (petIndex === -1) {
+export async function validatePetExistence(req: Request, res: Response, next: NextFunction) {
+  const pet = await PetshopService.getPetObject(req.params.id);
+  if (!pet) {
     res.status(404).json({ error: "Pet não encontrado!" });
     return;
   }
-  req.petIndex = petIndex;
+  req.petId = pet.id;
   next();
 }
 

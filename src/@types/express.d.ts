@@ -10,7 +10,7 @@ declare global {
       petshop?: PetshopInput;
       cnpj?: string;
       cpf?: string;
-      petIndex?: number;
+      petId?: string;
     }
   }
 }

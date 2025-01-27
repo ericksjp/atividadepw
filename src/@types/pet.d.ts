@@ -1,11 +1,4 @@
-export type Pet = {
-  id: string;
-  name: string;
-  type: string;
-  description?: string;
-  vaccinated: boolean;
-  deadline_vaccination: Date;
-  created_at: Date;
-};
+import {Pet as PrismaPet} from "@prisma/client"
 
-export type PetInput = Omit<Pet, "id" | "created_at" | "vaccinated">;
+export type Pet = Omit<PrismaPet, "petshopCnpj">;
+export type PetInput = Omit<Pet, "id" | "createdAt" | "vaccinated" | "updatedAt">;

@@ -1,10 +1,9 @@
 import { Pet } from "./pet";
+import {Petshop as PrismaPetshop} from "@prisma/client"
 
-export type Petshop = {
-  id: string;
-  name: string;
-  cnpj: string;
+// Extend PetshopInput with additional properties
+export type Petshop = PrismaPetshop & {
   pets: Pet[];
 };
 
-export type PetshopInput = Omit<Petshop, "id" | "pets">;
+export type PetshopInput = Omit<Petshop, "id" | "pets" | "createtAt", "updatetAt">;

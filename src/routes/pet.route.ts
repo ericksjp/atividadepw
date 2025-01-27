@@ -6,7 +6,10 @@ import {
   vacinarPet,
 } from "@controllers/pet.controller";
 import { Router } from "express";
-import { validatePetData, validatePetExistence } from "src/middlewares/validator";
+import {
+  validatePetData,
+  validatePetExistence,
+} from "src/middlewares/validator";
 
 const petsRouter = Router();
 

@@ -1,116 +1,73 @@
-import { randomUUID } from "node:crypto";
 import { Pet, PetInput } from "src/@types/pet";
 import { Petshop, PetshopInput } from "src/@types/petshop";
-
-const petshopMap = new Map<String, Petshop>();
+import prisma from "src/db/prisma";
 
 class PetshopService {
   // o a geração do id petshop e a inicialização do array de pets ocorre aqui
-  static addPetshop(petshop: PetshopInput): Petshop {
-    const id = randomUUID();
+  static async addPetshop(petshop: PetshopInput): Promise<Petshop> {
+    const petshopObject = await prisma.petshop.create({
+      data: {
+        ...petshop,
+      },
+    });
 
-    const petshopObject = petshopMap.set(petshop.cnpj, {
-      id,
-      ...petshop,
-      pets: [],
-    }).get(petshop.cnpj);
-
-    return petshopObject as Petshop;
+    return { ...petshopObject, pets: [] };
   }
 
-  static hasPetshop(cnpj: string): boolean {
-    return petshopMap.has(cnpj);
+  static async hasPetshop(cnpj: string): Promise<boolean> {
+    return !!(await prisma.petshop.findUnique({ where: { cnpj } }));
   }
 
-  static getPets(cnpj: string): Pet[] {
-    return petshopMap.get(cnpj)?.pets || [];
+  static async getPets(cnpj: string): Promise<Pet[]> {
+    return prisma.pet.findMany({
+      where: { petshopCnpj: cnpj },
+      omit: { petshopCnpj: true },
+    });
   }
 
-  static insertPet(cnpj: string, pet: PetInput): Pet {
-    const petshop = petshopMap.get(cnpj);
-
-    if (!petshop) {
-      throw new Error("Petshop não encontrado!");
-    }
-
-    const petObject: Pet = {
-      ...pet,
-      id: randomUUID(),
-      vaccinated: false,
-      created_at: new Date(),
-    };
-
-    petshop.pets.push(petObject);
-    return petObject;
+  static async insertPet(cnpj: string, pet: PetInput): Promise<Pet> {
+    return await prisma.pet.create({
+      data: { ...pet, petshopCnpj: cnpj, vaccinated: false },
+      omit: { petshopCnpj: true },
+    });
   }
 
-  static updatePet(cnpj: string, petIndex: number, pet: PetInput): Pet {
-    const petshop = petshopMap.get(cnpj);
+  static async updatePet(petId: string, pet: PetInput): Promise<Pet> {
+    return await prisma.pet.update({
+      where: { id: petId },
+      data: pet,
+      omit: { petshopCnpj: true },
+    });
+  }
 
-    if (!petshop) {
-      throw new Error("Petshop não encontrado!");
-    }
+  static async vaccinatePet(petId: string): Promise<Pet> {
+    return await prisma.pet.update({
+      where: { id: petId },
+      data: { vaccinated: true },
+      omit: { petshopCnpj: true },
+    });
+  }
 
-    const oldPetObject = petshop.pets[petIndex];
+  static async deletePet(petId: string): Promise<Pet[]> {
+    const pet = await prisma.pet.delete({
+      where: { id: petId },
+    });
 
-    if (!oldPetObject) {
+    if (!pet) {
       throw new Error("Pet não encontrado!");
     }
 
-    const newPetObject: Pet = {
-      ...oldPetObject,
-      ...pet,
-    };
-
-    petshop.pets[petIndex] = newPetObject;
-
-    return newPetObject;
+    return await prisma.pet.findMany({
+      where: { petshopCnpj: pet.petshopCnpj },
+      omit: { petshopCnpj: true },
+    });
   }
 
-  static vaccinatePet(cnpj: string, petIndex: number): Pet {
-    const petObject = this.getPetObject(cnpj, petIndex);
-    petObject.vaccinated = true;
-    return petObject;
-  }
-
-  static deletePet(cnpj: string, petIndex: number): Pet[] {
-    const petshop = petshopMap.get(cnpj);
-
-    if (!petshop) {
-      throw new Error("Petshop não encontrado!");
-    }
-
-    petshop.pets.splice(petIndex, 1);
-
-    return petshop.pets;
-  }
-
-  static getPetObject(cnpj: string, petIndex: number): Pet {
-    const petshop = petshopMap.get(cnpj);
-
-    if (!petshop) {
-      throw new Error("Petshop não encontrado!");
-    }
-
-    const petObject = petshop.pets[petIndex];
-
-    if (!petObject) {
-      throw new Error("Pet não encontrado!");
-    }
-
-    return petObject;
-  }
-
-  static getPetIndex(cnpj: string, petId: string): number {
-    const petshop = petshopMap.get(cnpj);
-
-    if (!petshop) {
-      throw new Error("Petshop não encontrado!");
-    }
-
-    const petObject = petshop.pets.findIndex((p) => p.id === petId);
-
-    return petObject;
+  static async getPetObject(petId: string): Promise<Pet | null> {
+    return await prisma.pet.findUnique({
+      where: { id: petId },
+      omit: { petshopCnpj: true },
+    });
   }
 }
 
